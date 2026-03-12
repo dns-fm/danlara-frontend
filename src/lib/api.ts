@@ -11,6 +11,20 @@ export class ApiError extends Error {
   }
 }
 
+async function requestMultipart<T>(path: string, options: RequestInit): Promise<T> {
+  const res = await fetch(`${API_URL}${path}`, options)
+  if (!res.ok) {
+    let detail = `Request failed (${res.status})`
+    try {
+      const body = await res.json()
+      if (body?.detail) detail = body.detail
+    } catch {}
+    throw new ApiError(detail, res.status)
+  }
+  if (res.status === 204) return undefined as T
+  return res.json() as Promise<T>
+}
+
 async function request<T>(
   path: string,
   options: RequestInit = {},
@@ -275,3 +289,74 @@ export const getTrademarksApi = (
     headers: bearer(token),
   })
 }
+
+// ─── Brands types ─────────────────────────────────────────────────────────────
+
+export interface BrandListItem {
+  id: string
+  external_id: string | null
+  name: string | null
+  nice_class: string | null
+  client: string | null
+  deposit: string | null
+  is_active: boolean
+  logo_url: string | null
+}
+
+export interface BrandDetail {
+  id: string
+  external_id: string | null
+  name: string | null
+  nature: string | null
+  nice_class: string | null
+  status: string | null
+  sector: string | null
+  presentation: string | null
+  reference: string | null
+  client: string | null
+  client_note: string | null
+  logo_url: string | null
+  titular: string | null
+  services: string | null
+  publications: string | null
+  priority: string | null
+  unfolding: string | null
+  is_active: boolean
+  extension: string | null
+  deposit: string | null
+  register: string | null
+  first_register: string | null
+  created_at: string
+  updated_at: string
+}
+
+// ─── Brands API calls ─────────────────────────────────────────────────────────
+
+export const getBrandsApi = (
+  token: string,
+  params: { page?: number; page_size?: number; search?: string; is_active?: boolean } = {},
+) => {
+  const qs = new URLSearchParams()
+  if (params.page) qs.set('page', String(params.page))
+  if (params.page_size) qs.set('page_size', String(params.page_size))
+  if (params.search) qs.set('search', params.search)
+  if (params.is_active !== undefined) qs.set('is_active', String(params.is_active))
+  return request<Paginated<BrandListItem>>(`/api/brands/?${qs}`, { headers: bearer(token) })
+}
+
+export const getBrandApi = (token: string, brandId: string) =>
+  request<BrandDetail>(`/api/brands/${brandId}`, { headers: bearer(token) })
+
+export const createBrandApi = (token: string, formData: FormData) =>
+  requestMultipart<BrandDetail>('/api/brands/', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  })
+
+export const uploadBrandsJsonApi = (token: string, formData: FormData) =>
+  requestMultipart<{ detail: string }>('/api/brands/upload', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  })

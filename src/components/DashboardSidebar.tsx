@@ -11,6 +11,8 @@ import {
   ChevronRight,
   FileText,
   Stamp,
+  Plus,
+  Upload,
 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
@@ -27,7 +29,16 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: 'Dashboard', icon: LayoutDashboard, to: '/dashboard' },
   { label: 'Billing', icon: CreditCard, to: '/billing' },
-  { label: 'My Brands', icon: Tag, to: '/brands' },
+  {
+    label: 'My Brands',
+    icon: Tag,
+    to: '/brands',
+    children: [
+      { label: 'All Brands', icon: Tag, to: '/brands' },
+      { label: 'Add Brand', icon: Plus, to: '/brands/new' },
+      { label: 'Upload JSON', icon: Upload, to: '/brands/upload' },
+    ],
+  },
   {
     label: 'Third-Party Brands',
     icon: Users,
@@ -97,7 +108,9 @@ export function DashboardSidebar({ user, onLogout }: DashboardSidebarProps) {
                       const isChildActive =
                         childTo === '/third-party-brands'
                           ? currentPath === childTo || (currentPath.startsWith(childTo + '/') && !currentPath.startsWith('/third-party-brands/trademarks'))
-                          : currentPath === childTo || currentPath.startsWith(childTo + '/')
+                          : childTo === '/brands'
+                            ? currentPath === childTo || (currentPath.startsWith('/brands/') && !currentPath.startsWith('/brands/new') && !currentPath.startsWith('/brands/upload'))
+                            : currentPath === childTo || currentPath.startsWith(childTo + '/')
                       return (
                         <Link
                           key={childTo}
