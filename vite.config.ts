@@ -14,9 +14,10 @@ const config = defineConfig({
     nitro({
       rollupConfig: { external: [/^@sentry\//] },
       routeRules: {
-        // Proxy /api/** to the Django backend.
+        // Proxy /api/** and /media/** to the Django backend.
         // In production this is handled by VITE_API_URL or a reverse proxy.
         '/api/**': { proxy: 'http://localhost:8000/api/**' },
+        '/media/**': { proxy: 'http://localhost:8000/media/**' },
       },
     }),
     tsconfigPaths({ projects: ['./tsconfig.json'] }),

@@ -89,6 +89,34 @@ export interface RegisterOut {
   subscription_id: number
 }
 
+export interface SubscriptionOut {
+  id: number
+  stripe_subscription_id: string
+  stripe_price_id: string
+  status: string
+  current_period_start: string | null
+  current_period_end: string | null
+  trial_end: string | null
+  canceled_at: string | null
+  plan: Plan
+}
+
+export interface CompanyOut {
+  id: number
+  name: string
+  slug: string
+  owner_id: number | null
+  stripe_customer_id: string | null
+  active_subscription: SubscriptionOut | null
+}
+
+export interface DashboardStats {
+  total_brands: number
+  active_jobs: number
+  conflicts_found: number
+  monitored_markets: number
+}
+
 // ─── API calls ────────────────────────────────────────────────────────────────
 
 export const plansApi = () =>
@@ -114,5 +142,106 @@ export const logoutApi = (token: string) =>
 
 export const getMeApi = (token: string) =>
   request<UserOut>('/api/users/auth/me', {
+    headers: bearer(token),
+  })
+
+export const getCompanyApi = (token: string) =>
+  request<CompanyOut>('/api/users/company', {
+    headers: bearer(token),
+  })
+
+export const getSubscriptionApi = (token: string) =>
+  request<SubscriptionOut>('/api/users/company/subscription', {
+    headers: bearer(token),
+  })
+
+export const getDashboardStatsApi = (token: string) =>
+  request<DashboardStats>('/api/users/dashboard/stats', {
+    headers: bearer(token),
+  })
+
+// ─── RNPI types ───────────────────────────────────────────────────────────────
+
+export interface Report {
+  id: string
+  number: number
+  name: string
+  publication_date: string
+  number_of_processes: number | null
+  status: string
+  size: number
+  unit: string
+  pdf: string
+  xml: string
+  created_at: string
+}
+
+export interface ProcessListItem {
+  id: string
+  number: string
+  name: string | null
+  nature: string | null
+  presentation: string | null
+  deposit_date: string | null
+  grant_date: string | null
+  validity_date: string | null
+  nice_classes: string
+  is_active: boolean
+}
+
+export interface ProcessDetail extends ProcessListItem {
+  nice: unknown[] | null
+  titular: unknown[] | null
+  despacho: unknown[] | null
+  vienna: unknown[] | null
+  madrid: unknown[] | null
+  logo_url: string | null
+  metadata: string | null
+  report_id: string
+  report_number: number
+  report_name: string
+  updated_at: string
+}
+
+export interface Paginated<T> {
+  items: T[]
+  total: number
+  page: number
+  page_size: number
+  total_pages: number
+}
+
+// ─── RNPI API calls ───────────────────────────────────────────────────────────
+
+export const getReportsApi = (
+  token: string,
+  params: { page?: number; page_size?: number; search?: string } = {},
+) => {
+  const qs = new URLSearchParams()
+  if (params.page) qs.set('page', String(params.page))
+  if (params.page_size) qs.set('page_size', String(params.page_size))
+  if (params.search) qs.set('search', params.search)
+  return request<Paginated<Report>>(`/api/rnpi/reports?${qs}`, {
+    headers: bearer(token),
+  })
+}
+
+export const getProcessesApi = (
+  token: string,
+  reportId: string,
+  params: { page?: number; page_size?: number; search?: string } = {},
+) => {
+  const qs = new URLSearchParams()
+  if (params.page) qs.set('page', String(params.page))
+  if (params.page_size) qs.set('page_size', String(params.page_size))
+  if (params.search) qs.set('search', params.search)
+  return request<Paginated<ProcessListItem>>(
+    `/api/rnpi/reports/${reportId}/processes?${qs}`,
+    { headers: bearer(token) },
+  )
+}
+
+export const getProcessApi = (token: string, processId: string) =>
+  request<ProcessDetail>(`/api/rnpi/processes/${processId}`, {
     headers: bearer(token),
   })

@@ -2,6 +2,7 @@ import {
   HeadContent,
   Scripts,
   createRootRouteWithContext,
+  useRouterState,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
@@ -47,6 +48,21 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   shellComponent: RootDocument,
 })
 
+const APP_ROUTES = ['/dashboard', '/third-party-brands', '/brands', '/billing', '/conflicts', '/account']
+
+function AppShell({ children }: { children: React.ReactNode }) {
+  const { location } = useRouterState()
+  const isApp = APP_ROUTES.some((p) => location.pathname.startsWith(p))
+  if (isApp) return <>{children}</>
+  return (
+    <>
+      <Header />
+      {children}
+      <Footer />
+    </>
+  )
+}
+
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -57,9 +73,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
         <TanStackQueryProvider>
           <AuthProvider>
-          <Header />
-          {children}
-          <Footer />
+          <AppShell>{children}</AppShell>
           <TanStackDevtools
             config={{
               position: 'bottom-right',
