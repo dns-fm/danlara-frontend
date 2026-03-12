@@ -117,19 +117,24 @@ export function DashboardSidebar({ user, onLogout, isMobileOpen, onMobileClose }
 
           if (children) {
             const isOpen = !collapsed && (openMenus[to] ?? false)
+            const groupClassName = cn(
+              'flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors text-left',
+              collapsed && 'justify-center px-0',
+              isGroupActive
+                ? 'text-sidebar-foreground'
+                : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground',
+            )
             return (
               <div key={to}>
+                {collapsed ? (
+                  <Link to={to} title={label} className={groupClassName}>
+                    <Icon className="h-4 w-4 flex-shrink-0" />
+                  </Link>
+                ) : (
                 <button
                   type="button"
-                  title={collapsed ? label : undefined}
-                  onClick={() => collapsed ? undefined : toggleMenu(to)}
-                  className={cn(
-                    'flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors text-left',
-                    collapsed && 'justify-center px-0',
-                    isGroupActive
-                      ? 'text-sidebar-foreground'
-                      : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground',
-                  )}
+                  onClick={() => toggleMenu(to)}
+                  className={groupClassName}
                 >
                   <Icon className="h-4 w-4 flex-shrink-0" />
                   {!collapsed && (
@@ -144,6 +149,7 @@ export function DashboardSidebar({ user, onLogout, isMobileOpen, onMobileClose }
                     </>
                   )}
                 </button>
+                )}
                 {isOpen && (
                   <div className="ml-4 mt-0.5 space-y-0.5 border-l border-sidebar-border pl-3">
                     {children.map(({ label: childLabel, icon: ChildIcon, to: childTo }) => {
