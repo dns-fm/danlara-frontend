@@ -18,6 +18,7 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as RegisterCompleteRouteImport } from './routes/register/complete'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
+import { Route as ThirdPartyBrandsTrademarksIndexRouteImport } from './routes/third-party-brands/trademarks/index'
 import { Route as ThirdPartyBrandsReportIdIndexRouteImport } from './routes/third-party-brands/$reportId/index'
 import { Route as ThirdPartyBrandsReportIdProcessIdRouteImport } from './routes/third-party-brands/$reportId/$processId'
 import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
@@ -68,6 +69,12 @@ const DemoTableRoute = DemoTableRouteImport.update({
   path: '/demo/table',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ThirdPartyBrandsTrademarksIndexRoute =
+  ThirdPartyBrandsTrademarksIndexRouteImport.update({
+    id: '/third-party-brands/trademarks/',
+    path: '/third-party-brands/trademarks/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ThirdPartyBrandsReportIdIndexRoute =
   ThirdPartyBrandsReportIdIndexRouteImport.update({
     id: '/third-party-brands/$reportId/',
@@ -105,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/third-party-brands/$reportId/$processId': typeof ThirdPartyBrandsReportIdProcessIdRoute
   '/third-party-brands/$reportId/': typeof ThirdPartyBrandsReportIdIndexRoute
+  '/third-party-brands/trademarks/': typeof ThirdPartyBrandsTrademarksIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -120,6 +128,7 @@ export interface FileRoutesByTo {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/third-party-brands/$reportId/$processId': typeof ThirdPartyBrandsReportIdProcessIdRoute
   '/third-party-brands/$reportId': typeof ThirdPartyBrandsReportIdIndexRoute
+  '/third-party-brands/trademarks': typeof ThirdPartyBrandsTrademarksIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -136,6 +145,7 @@ export interface FileRoutesById {
   '/demo/form/simple': typeof DemoFormSimpleRoute
   '/third-party-brands/$reportId/$processId': typeof ThirdPartyBrandsReportIdProcessIdRoute
   '/third-party-brands/$reportId/': typeof ThirdPartyBrandsReportIdIndexRoute
+  '/third-party-brands/trademarks/': typeof ThirdPartyBrandsTrademarksIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -153,6 +163,7 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/third-party-brands/$reportId/$processId'
     | '/third-party-brands/$reportId/'
+    | '/third-party-brands/trademarks/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/third-party-brands/$reportId/$processId'
     | '/third-party-brands/$reportId'
+    | '/third-party-brands/trademarks'
   id:
     | '__root__'
     | '/'
@@ -183,6 +195,7 @@ export interface FileRouteTypes {
     | '/demo/form/simple'
     | '/third-party-brands/$reportId/$processId'
     | '/third-party-brands/$reportId/'
+    | '/third-party-brands/trademarks/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -199,6 +212,7 @@ export interface RootRouteChildren {
   DemoFormSimpleRoute: typeof DemoFormSimpleRoute
   ThirdPartyBrandsReportIdProcessIdRoute: typeof ThirdPartyBrandsReportIdProcessIdRoute
   ThirdPartyBrandsReportIdIndexRoute: typeof ThirdPartyBrandsReportIdIndexRoute
+  ThirdPartyBrandsTrademarksIndexRoute: typeof ThirdPartyBrandsTrademarksIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -266,6 +280,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoTableRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/third-party-brands/trademarks/': {
+      id: '/third-party-brands/trademarks/'
+      path: '/third-party-brands/trademarks'
+      fullPath: '/third-party-brands/trademarks/'
+      preLoaderRoute: typeof ThirdPartyBrandsTrademarksIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/third-party-brands/$reportId/': {
       id: '/third-party-brands/$reportId/'
       path: '/third-party-brands/$reportId'
@@ -312,6 +333,7 @@ const rootRouteChildren: RootRouteChildren = {
   ThirdPartyBrandsReportIdProcessIdRoute:
     ThirdPartyBrandsReportIdProcessIdRoute,
   ThirdPartyBrandsReportIdIndexRoute: ThirdPartyBrandsReportIdIndexRoute,
+  ThirdPartyBrandsTrademarksIndexRoute: ThirdPartyBrandsTrademarksIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

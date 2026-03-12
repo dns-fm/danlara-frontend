@@ -8,17 +8,35 @@ import {
   User,
   LogOut,
   Shield,
+  ChevronRight,
+  FileText,
+  Stamp,
 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
 import { cn } from '../lib/utils'
 import type { UserOut } from '../lib/api'
 
-const navItems = [
+interface NavItem {
+  label: string
+  icon: React.ElementType
+  to: string
+  children?: { label: string; icon: React.ElementType; to: string }[]
+}
+
+const navItems: NavItem[] = [
   { label: 'Dashboard', icon: LayoutDashboard, to: '/dashboard' },
   { label: 'Billing', icon: CreditCard, to: '/billing' },
   { label: 'My Brands', icon: Tag, to: '/brands' },
-  { label: 'Third-Party Brands', icon: Users, to: '/third-party-brands' },
+  {
+    label: 'Third-Party Brands',
+    icon: Users,
+    to: '/third-party-brands',
+    children: [
+      { label: 'Publications', icon: FileText, to: '/third-party-brands' },
+      { label: 'Trademarks', icon: Stamp, to: '/third-party-brands/trademarks' },
+    ],
+  },
   { label: 'Conflicts', icon: AlertTriangle, to: '/conflicts' },
   { label: 'Account', icon: User, to: '/account' },
 ]
@@ -46,7 +64,62 @@ export function DashboardSidebar({ user, onLogout }: DashboardSidebarProps) {
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-        {navItems.map(({ label, icon: Icon, to }) => {
+        {navItems.map(({ label, icon: Icon, to, children }) => {
+          const isGroupActive = to !== '/dashboard' && currentPath.startsWith(to)
+          const isExactActive = currentPath === to
+
+          if (children) {
+            const isOpen = isGroupActive
+            return (
+              <div key={to}>
+                {/* Parent item — not a link, just a label that expands */}
+                <div
+                  className={cn(
+                    'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium',
+                    isOpen
+                      ? 'text-sidebar-foreground'
+                      : 'text-sidebar-foreground/70',
+                  )}
+                >
+                  <Icon className="h-4 w-4 flex-shrink-0" />
+                  <span className="flex-1">{label}</span>
+                  <ChevronRight
+                    className={cn(
+                      'h-3.5 w-3.5 transition-transform text-sidebar-foreground/40',
+                      isOpen && 'rotate-90',
+                    )}
+                  />
+                </div>
+                {/* Children */}
+                {isOpen && (
+                  <div className="ml-4 mt-0.5 space-y-0.5 border-l border-sidebar-border pl-3">
+                    {children.map(({ label: childLabel, icon: ChildIcon, to: childTo }) => {
+                      const isChildActive =
+                        childTo === '/third-party-brands'
+                          ? currentPath === childTo || (currentPath.startsWith(childTo + '/') && !currentPath.startsWith('/third-party-brands/trademarks'))
+                          : currentPath === childTo || currentPath.startsWith(childTo + '/')
+                      return (
+                        <Link
+                          key={childTo}
+                          to={childTo}
+                          className={cn(
+                            'flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
+                            isChildActive
+                              ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
+                              : 'text-sidebar-foreground/60 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground',
+                          )}
+                        >
+                          <ChildIcon className="h-3.5 w-3.5 flex-shrink-0" />
+                          {childLabel}
+                        </Link>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            )
+          }
+
           const isActive = currentPath === to || (to !== '/dashboard' && currentPath.startsWith(to))
           return (
             <Link

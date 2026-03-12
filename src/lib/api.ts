@@ -203,6 +203,13 @@ export interface ProcessDetail extends ProcessListItem {
   updated_at: string
 }
 
+export interface TrademarkListItem extends ProcessListItem {
+  report_id: string
+  report_number: number
+  report_name: string
+  publication_date: string
+}
+
 export interface Paginated<T> {
   items: T[]
   total: number
@@ -245,3 +252,26 @@ export const getProcessApi = (token: string, processId: string) =>
   request<ProcessDetail>(`/api/rnpi/processes/${processId}`, {
     headers: bearer(token),
   })
+
+export const getTrademarksApi = (
+  token: string,
+  params: {
+    page?: number
+    page_size?: number
+    search?: string
+    report_number?: number
+    deposit_date_from?: string
+    deposit_date_to?: string
+  } = {},
+) => {
+  const qs = new URLSearchParams()
+  if (params.page) qs.set('page', String(params.page))
+  if (params.page_size) qs.set('page_size', String(params.page_size))
+  if (params.search) qs.set('search', params.search)
+  if (params.report_number) qs.set('report_number', String(params.report_number))
+  if (params.deposit_date_from) qs.set('deposit_date_from', params.deposit_date_from)
+  if (params.deposit_date_to) qs.set('deposit_date_to', params.deposit_date_to)
+  return request<Paginated<TrademarkListItem>>(`/api/rnpi/trademarks?${qs}`, {
+    headers: bearer(token),
+  })
+}
