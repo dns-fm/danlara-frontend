@@ -13,11 +13,18 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RegisterIndexRouteImport } from './routes/register/index'
+import { Route as ConflictsIndexRouteImport } from './routes/conflicts/index'
+import { Route as AccountIndexRouteImport } from './routes/account/index'
 import { Route as RegisterCompleteRouteImport } from './routes/register/complete'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as DemoTableRouteImport } from './routes/demo/table'
+import { Route as ConflictsNewRouteImport } from './routes/conflicts/new'
+import { Route as ConflictsMatchesIndexRouteImport } from './routes/conflicts/matches/index'
+import { Route as ConflictsJobIdIndexRouteImport } from './routes/conflicts/$jobId/index'
+import { Route as BrandsUploadsIndexRouteImport } from './routes/brands/uploads/index'
 import { Route as DemoFormSimpleRouteImport } from './routes/demo/form.simple'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
+import { Route as ConflictsMatchesMatchIdIndexRouteImport } from './routes/conflicts/matches/$matchId/index'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -39,6 +46,16 @@ const RegisterIndexRoute = RegisterIndexRouteImport.update({
   path: '/register/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConflictsIndexRoute = ConflictsIndexRouteImport.update({
+  id: '/conflicts/',
+  path: '/conflicts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountIndexRoute = AccountIndexRouteImport.update({
+  id: '/account/',
+  path: '/account/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterCompleteRoute = RegisterCompleteRouteImport.update({
   id: '/register/complete',
   path: '/register/complete',
@@ -54,6 +71,26 @@ const DemoTableRoute = DemoTableRouteImport.update({
   path: '/demo/table',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConflictsNewRoute = ConflictsNewRouteImport.update({
+  id: '/conflicts/new',
+  path: '/conflicts/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConflictsMatchesIndexRoute = ConflictsMatchesIndexRouteImport.update({
+  id: '/conflicts/matches/',
+  path: '/conflicts/matches/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConflictsJobIdIndexRoute = ConflictsJobIdIndexRouteImport.update({
+  id: '/conflicts/$jobId/',
+  path: '/conflicts/$jobId/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BrandsUploadsIndexRoute = BrandsUploadsIndexRouteImport.update({
+  id: '/brands/uploads/',
+  path: '/brands/uploads/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoFormSimpleRoute = DemoFormSimpleRouteImport.update({
   id: '/demo/form/simple',
   path: '/demo/form/simple',
@@ -64,40 +101,67 @@ const DemoFormAddressRoute = DemoFormAddressRouteImport.update({
   path: '/demo/form/address',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ConflictsMatchesMatchIdIndexRoute =
+  ConflictsMatchesMatchIdIndexRouteImport.update({
+    id: '/conflicts/matches/$matchId/',
+    path: '/conflicts/matches/$matchId/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
+  '/conflicts/new': typeof ConflictsNewRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/register/complete': typeof RegisterCompleteRoute
+  '/account/': typeof AccountIndexRoute
+  '/conflicts/': typeof ConflictsIndexRoute
   '/register/': typeof RegisterIndexRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
+  '/brands/uploads/': typeof BrandsUploadsIndexRoute
+  '/conflicts/$jobId/': typeof ConflictsJobIdIndexRoute
+  '/conflicts/matches/': typeof ConflictsMatchesIndexRoute
+  '/conflicts/matches/$matchId/': typeof ConflictsMatchesMatchIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
+  '/conflicts/new': typeof ConflictsNewRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/register/complete': typeof RegisterCompleteRoute
+  '/account': typeof AccountIndexRoute
+  '/conflicts': typeof ConflictsIndexRoute
   '/register': typeof RegisterIndexRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
+  '/brands/uploads': typeof BrandsUploadsIndexRoute
+  '/conflicts/$jobId': typeof ConflictsJobIdIndexRoute
+  '/conflicts/matches': typeof ConflictsMatchesIndexRoute
+  '/conflicts/matches/$matchId': typeof ConflictsMatchesMatchIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
+  '/conflicts/new': typeof ConflictsNewRoute
   '/demo/table': typeof DemoTableRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
   '/register/complete': typeof RegisterCompleteRoute
+  '/account/': typeof AccountIndexRoute
+  '/conflicts/': typeof ConflictsIndexRoute
   '/register/': typeof RegisterIndexRoute
   '/demo/form/address': typeof DemoFormAddressRoute
   '/demo/form/simple': typeof DemoFormSimpleRoute
+  '/brands/uploads/': typeof BrandsUploadsIndexRoute
+  '/conflicts/$jobId/': typeof ConflictsJobIdIndexRoute
+  '/conflicts/matches/': typeof ConflictsMatchesIndexRoute
+  '/conflicts/matches/$matchId/': typeof ConflictsMatchesMatchIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -105,46 +169,74 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/login'
+    | '/conflicts/new'
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/register/complete'
+    | '/account/'
+    | '/conflicts/'
     | '/register/'
     | '/demo/form/address'
     | '/demo/form/simple'
+    | '/brands/uploads/'
+    | '/conflicts/$jobId/'
+    | '/conflicts/matches/'
+    | '/conflicts/matches/$matchId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/login'
+    | '/conflicts/new'
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/register/complete'
+    | '/account'
+    | '/conflicts'
     | '/register'
     | '/demo/form/address'
     | '/demo/form/simple'
+    | '/brands/uploads'
+    | '/conflicts/$jobId'
+    | '/conflicts/matches'
+    | '/conflicts/matches/$matchId'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/login'
+    | '/conflicts/new'
     | '/demo/table'
     | '/demo/tanstack-query'
     | '/register/complete'
+    | '/account/'
+    | '/conflicts/'
     | '/register/'
     | '/demo/form/address'
     | '/demo/form/simple'
+    | '/brands/uploads/'
+    | '/conflicts/$jobId/'
+    | '/conflicts/matches/'
+    | '/conflicts/matches/$matchId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   LoginRoute: typeof LoginRoute
+  ConflictsNewRoute: typeof ConflictsNewRoute
   DemoTableRoute: typeof DemoTableRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
   RegisterCompleteRoute: typeof RegisterCompleteRoute
+  AccountIndexRoute: typeof AccountIndexRoute
+  ConflictsIndexRoute: typeof ConflictsIndexRoute
   RegisterIndexRoute: typeof RegisterIndexRoute
   DemoFormAddressRoute: typeof DemoFormAddressRoute
   DemoFormSimpleRoute: typeof DemoFormSimpleRoute
+  BrandsUploadsIndexRoute: typeof BrandsUploadsIndexRoute
+  ConflictsJobIdIndexRoute: typeof ConflictsJobIdIndexRoute
+  ConflictsMatchesIndexRoute: typeof ConflictsMatchesIndexRoute
+  ConflictsMatchesMatchIdIndexRoute: typeof ConflictsMatchesMatchIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -177,6 +269,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conflicts/': {
+      id: '/conflicts/'
+      path: '/conflicts'
+      fullPath: '/conflicts/'
+      preLoaderRoute: typeof ConflictsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account/': {
+      id: '/account/'
+      path: '/account'
+      fullPath: '/account/'
+      preLoaderRoute: typeof AccountIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/register/complete': {
       id: '/register/complete'
       path: '/register/complete'
@@ -198,6 +304,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoTableRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conflicts/new': {
+      id: '/conflicts/new'
+      path: '/conflicts/new'
+      fullPath: '/conflicts/new'
+      preLoaderRoute: typeof ConflictsNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conflicts/matches/': {
+      id: '/conflicts/matches/'
+      path: '/conflicts/matches'
+      fullPath: '/conflicts/matches/'
+      preLoaderRoute: typeof ConflictsMatchesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conflicts/$jobId/': {
+      id: '/conflicts/$jobId/'
+      path: '/conflicts/$jobId'
+      fullPath: '/conflicts/$jobId/'
+      preLoaderRoute: typeof ConflictsJobIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/brands/uploads/': {
+      id: '/brands/uploads/'
+      path: '/brands/uploads'
+      fullPath: '/brands/uploads/'
+      preLoaderRoute: typeof BrandsUploadsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/form/simple': {
       id: '/demo/form/simple'
       path: '/demo/form/simple'
@@ -212,6 +346,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoFormAddressRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conflicts/matches/$matchId/': {
+      id: '/conflicts/matches/$matchId/'
+      path: '/conflicts/matches/$matchId'
+      fullPath: '/conflicts/matches/$matchId/'
+      preLoaderRoute: typeof ConflictsMatchesMatchIdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -219,12 +360,19 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   LoginRoute: LoginRoute,
+  ConflictsNewRoute: ConflictsNewRoute,
   DemoTableRoute: DemoTableRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
   RegisterCompleteRoute: RegisterCompleteRoute,
+  AccountIndexRoute: AccountIndexRoute,
+  ConflictsIndexRoute: ConflictsIndexRoute,
   RegisterIndexRoute: RegisterIndexRoute,
   DemoFormAddressRoute: DemoFormAddressRoute,
   DemoFormSimpleRoute: DemoFormSimpleRoute,
+  BrandsUploadsIndexRoute: BrandsUploadsIndexRoute,
+  ConflictsJobIdIndexRoute: ConflictsJobIdIndexRoute,
+  ConflictsMatchesIndexRoute: ConflictsMatchesIndexRoute,
+  ConflictsMatchesMatchIdIndexRoute: ConflictsMatchesMatchIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
