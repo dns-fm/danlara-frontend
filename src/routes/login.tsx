@@ -30,7 +30,7 @@ function LoginPage() {
     setLoading(true)
     try {
       await login(email, password)
-      await router.navigate({ to: '/' })
+      await router.navigate({ to: '/dashboard' })
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.detail)
