@@ -159,6 +159,27 @@ export const getMeApi = (token: string) =>
     headers: bearer(token),
   })
 
+export const updateProfileApi = (token: string, data: { first_name: string; last_name: string }) =>
+  request<UserOut>('/api/users/profile', {
+    method: 'PATCH',
+    headers: { ...bearer(token), 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+
+export const updateAvatarApi = (token: string, formData: FormData) =>
+  requestMultipart<UserOut>('/api/users/profile/avatar', {
+    method: 'POST',
+    headers: bearer(token),
+    body: formData,
+  })
+
+export const changePasswordApi = (token: string, data: { current_password: string; new_password1: string; new_password2: string }) =>
+  request<{ detail: string }>('/api/users/profile/password', {
+    method: 'POST',
+    headers: { ...bearer(token), 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+
 export const getCompanyApi = (token: string) =>
   request<CompanyOut>('/api/users/company', {
     headers: bearer(token),
@@ -359,4 +380,187 @@ export const uploadBrandsJsonApi = (token: string, formData: FormData) =>
     method: 'POST',
     headers: { Authorization: `Bearer ${token}` },
     body: formData,
+  })
+
+export interface UploadedFileItem {
+  id: number
+  original_filename: string | null
+  file_type: string
+  file_size: number | null
+  description: string | null
+  status: 'pending' | 'processing' | 'done' | 'failed'
+  error_message: string | null
+  uploaded_at: string
+  brand_count: number
+}
+
+export const getUploadsApi = (token: string) =>
+  request<UploadedFileItem[]>('/api/brands/uploads', {
+    headers: bearer(token),
+  })
+
+// ─── Jobs types ───────────────────────────────────────────────────────────────
+
+export interface ReportSearchItem {
+  id: string
+  number: number
+  name: string
+  publication_date: string | null
+}
+
+export interface JobItem {
+  id: string
+  report_id: string
+  report_number: number
+  report_name: string
+  company_id: number | null
+  status: 'P' | 'R' | 'F' | 'E' | 'C'
+  task_id: string | null
+  brands: number | null
+  matches_number: number | null
+  processed: number | null
+  started_at: string | null
+  completed_at: string | null
+  created_at: string
+  matching_config: Record<string, unknown> | null
+}
+
+// ─── Jobs API calls ───────────────────────────────────────────────────────────
+
+export const searchPublicationsApi = (token: string, q?: string) => {
+  const qs = new URLSearchParams()
+  if (q) qs.set('q', q)
+  return request<ReportSearchItem[]>(`/api/jobs/reports/search?${qs}`, {
+    headers: bearer(token),
+  })
+}
+
+export const getJobsApi = (token: string) =>
+  request<JobItem[]>('/api/jobs/', { headers: bearer(token) })
+
+export const createJobApi = (
+  token: string,
+  reportId: string,
+  config: { min_score?: number; k?: number } = {},
+) =>
+  request<JobItem>('/api/jobs/', {
+    method: 'POST',
+    headers: { ...bearer(token), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ report_id: reportId, ...config }),
+  })
+
+export const getJobApi = (token: string, jobId: string) =>
+  request<JobItem>(`/api/jobs/${jobId}`, { headers: bearer(token) })
+
+export interface MatchBrand {
+  id: string
+  name: string | null
+  nice_class: string | null
+  logo_url: string | null
+  client: string | null
+}
+
+export interface MatchProcess {
+  id: string
+  number: string
+  name: string | null
+  nature: string | null
+  nice_classes: string | null
+  logo_url: string | null
+}
+
+export interface MatchItem {
+  id: number
+  brand: MatchBrand
+  process: MatchProcess
+  final_score: number
+  extra_scores: {
+    similarity?: number
+    rerank?: number
+    search_score?: number
+    name_score?: number
+    services_score?: number
+    image_score?: number
+  } | null
+  reviewed: boolean
+  confirmed: boolean
+  is_match: boolean
+  created_at: string
+}
+
+export const getJobMatchesApi = (token: string, jobId: string, params: { page?: number; page_size?: number } = {}) => {
+  const qs = new URLSearchParams()
+  if (params.page) qs.set('page', String(params.page))
+  if (params.page_size) qs.set('page_size', String(params.page_size))
+  return request<Paginated<MatchItem>>(`/api/jobs/${jobId}/matches?${qs}`, { headers: bearer(token) })
+}
+
+// ─── Conflict Match types ─────────────────────────────────────────────────────
+
+export interface JobBrief {
+  id: string
+  report_number: number
+  report_name: string
+  created_at: string
+}
+
+export interface ConflictMatch {
+  id: number
+  job: JobBrief
+  brand: MatchBrand
+  process: MatchProcess
+  final_score: number
+  extra_scores: {
+    similarity?: number
+    rerank?: number
+    search_score?: number
+    name_score?: number
+    services_score?: number
+    image_score?: number
+  } | null
+  reviewed: boolean
+  confirmed: boolean
+  is_match: boolean
+  notes: string
+  created_at: string
+}
+
+export interface ConflictMatchesParams {
+  page?: number
+  page_size?: number
+  job_id?: string
+  search?: string
+  reviewed?: boolean
+  confirmed?: boolean
+  is_match?: boolean
+  min_score?: number
+  max_score?: number
+}
+
+export const getConflictMatchesApi = (token: string, params: ConflictMatchesParams = {}) => {
+  const qs = new URLSearchParams()
+  if (params.page) qs.set('page', String(params.page))
+  if (params.page_size) qs.set('page_size', String(params.page_size))
+  if (params.job_id) qs.set('job_id', params.job_id)
+  if (params.search) qs.set('search', params.search)
+  if (params.reviewed !== undefined) qs.set('reviewed', String(params.reviewed))
+  if (params.confirmed !== undefined) qs.set('confirmed', String(params.confirmed))
+  if (params.is_match !== undefined) qs.set('is_match', String(params.is_match))
+  if (params.min_score !== undefined) qs.set('min_score', String(params.min_score))
+  if (params.max_score !== undefined) qs.set('max_score', String(params.max_score))
+  return request<Paginated<ConflictMatch>>(`/api/jobs/matches?${qs}`, { headers: bearer(token) })
+}
+
+export const getConflictMatchApi = (token: string, matchId: number) =>
+  request<ConflictMatch>(`/api/jobs/matches/${matchId}`, { headers: bearer(token) })
+
+export const updateConflictMatchApi = (
+  token: string,
+  matchId: number,
+  payload: { reviewed?: boolean; confirmed?: boolean; is_match?: boolean; notes?: string },
+) =>
+  request<ConflictMatch>(`/api/jobs/matches/${matchId}`, {
+    method: 'PATCH',
+    headers: { ...bearer(token), 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
   })

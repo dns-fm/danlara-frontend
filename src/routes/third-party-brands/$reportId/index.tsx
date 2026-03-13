@@ -57,14 +57,14 @@ function ProcessesPage() {
             Publications
           </Link>
           <ChevronRight className="h-3.5 w-3.5" />
-          <span className="text-foreground font-medium">Documents</span>
+          <span className="text-foreground font-medium">Trademarks</span>
         </div>
 
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold tracking-tight">Documents</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Trademarks</h1>
           <p className="text-muted-foreground mt-1">
-            Trademark processes registered in this publication.
+            Trademark filings registered in this publication.
           </p>
         </div>
 
@@ -109,7 +109,7 @@ function ProcessesPage() {
                   ? (
                     <TableRow>
                       <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                        No documents found.
+                        No trademarks found.
                       </TableCell>
                     </TableRow>
                   )
@@ -163,7 +163,7 @@ function ProcessesPage() {
         {data && data.total_pages > 1 && (
           <div className="flex items-center justify-between mt-4">
             <p className="text-sm text-muted-foreground">
-              {data.total} documents — page {data.page} of {data.total_pages}
+              {data.total} trademarks — page {data.page} of {data.total_pages}
             </p>
             <div className="flex gap-2">
               <Button

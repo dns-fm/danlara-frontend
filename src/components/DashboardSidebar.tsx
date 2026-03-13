@@ -14,9 +14,11 @@ import {
   Stamp,
   Plus,
   Upload,
+  FolderOpen,
   PanelLeftClose,
   PanelLeftOpen,
   X,
+  List,
 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
@@ -41,6 +43,7 @@ const navItems: NavItem[] = [
       { label: 'All Brands', icon: Tag, to: '/brands' },
       { label: 'Add Brand', icon: Plus, to: '/brands/new' },
       { label: 'Upload JSON', icon: Upload, to: '/brands/upload' },
+      { label: 'Uploads', icon: FolderOpen, to: '/brands/uploads' },
     ],
   },
   {
@@ -52,7 +55,16 @@ const navItems: NavItem[] = [
       { label: 'Trademarks', icon: Stamp, to: '/third-party-brands/trademarks' },
     ],
   },
-  { label: 'Conflicts', icon: AlertTriangle, to: '/conflicts' },
+  {
+    label: 'Conflicts',
+    icon: AlertTriangle,
+    to: '/conflicts',
+    children: [
+      { label: 'All Jobs', icon: AlertTriangle, to: '/conflicts' },
+      { label: 'All Conflicts', icon: List, to: '/conflicts/matches' },
+      { label: 'New Job', icon: Plus, to: '/conflicts/new' },
+    ],
+  },
   { label: 'Account', icon: User, to: '/account' },
 ]
 
@@ -157,8 +169,12 @@ export function DashboardSidebar({ user, onLogout, isMobileOpen, onMobileClose }
                         childTo === '/third-party-brands'
                           ? currentPath === childTo || (currentPath.startsWith(childTo + '/') && !currentPath.startsWith('/third-party-brands/trademarks'))
                           : childTo === '/brands'
-                            ? currentPath === childTo || (currentPath.startsWith('/brands/') && !currentPath.startsWith('/brands/new') && !currentPath.startsWith('/brands/upload'))
-                            : currentPath === childTo || currentPath.startsWith(childTo + '/')
+                            ? currentPath === childTo || (currentPath.startsWith('/brands/') && !currentPath.startsWith('/brands/new') && !currentPath.startsWith('/brands/upload') && !currentPath.startsWith('/brands/uploads'))
+                            : childTo === '/conflicts'
+                              ? currentPath === childTo || (currentPath.startsWith('/conflicts/') && !currentPath.startsWith('/conflicts/matches') && !currentPath.startsWith('/conflicts/new'))
+                              : childTo === '/conflicts/matches'
+                                ? currentPath === childTo || currentPath.startsWith('/conflicts/matches/')
+                                : currentPath === childTo || currentPath.startsWith(childTo + '/')
                       return (
                         <Link
                           key={childTo}

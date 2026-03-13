@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from 'react'
-import { type UserOut, loginApi, logoutApi } from './api'
+import { type UserOut, loginApi, logoutApi, getMeApi } from './api'
 
 const TOKEN_KEY = 'danlara_token'
 
@@ -15,6 +15,7 @@ interface AuthState {
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
+  refreshUser: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthState | null>(null)
@@ -27,8 +28,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const stored = localStorage.getItem(TOKEN_KEY)
     if (stored) {
-      // We have a token — restore it. We could call /auth/me here to verify,
-      // but to keep it simple we just restore the stored user alongside it.
       const storedUser = localStorage.getItem('danlara_user')
       if (storedUser) {
         try {
@@ -61,8 +60,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null)
   }, [])
 
+  const refreshUser = useCallback(async () => {
+    const t = localStorage.getItem(TOKEN_KEY)
+    if (!t) return
+    try {
+      const fresh = await getMeApi(t)
+      localStorage.setItem('danlara_user', JSON.stringify(fresh))
+      setUser(fresh)
+    } catch {}
+  }, [])
+
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoading, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   )
