@@ -8,16 +8,18 @@ import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { nitro } from 'nitro/vite'
 
+// Configurable at build time — set BACKEND_URL in Railway env vars.
+// Falls back to localhost:8000 for local development.
+const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8000'
+
 const config = defineConfig({
   plugins: [
     devtools(),
     nitro({
       rollupConfig: { external: [/^@sentry\//] },
       routeRules: {
-        // Proxy /api/** and /media/** to the Django backend.
-        // In production this is handled by VITE_API_URL or a reverse proxy.
-        '/api/**': { proxy: 'http://localhost:8000/api/**' },
-        '/media/**': { proxy: 'http://localhost:8000/media/**' },
+        '/api/**': { proxy: `${BACKEND_URL}/api/**` },
+        '/media/**': { proxy: `${BACKEND_URL}/media/**` },
       },
     }),
     tsconfigPaths({ projects: ['./tsconfig.json'] }),

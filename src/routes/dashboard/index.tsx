@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import {
   Tag,
@@ -21,8 +21,10 @@ import { useAuth } from '../../lib/auth-context'
 import {
   getSubscriptionApi,
   getDashboardStatsApi,
+  getRecentActivityApi,
   type SubscriptionOut,
   type DashboardStats,
+  type ActivityLogItem,
 } from '../../lib/api'
 
 export const Route = createFileRoute('/dashboard/')({
@@ -59,31 +61,29 @@ function StatCard({ title, value, icon: Icon, loading }: StatCardProps) {
 // ─── Quick Actions ─────────────────────────────────────────────────────────────
 
 const quickActions = [
-  { label: 'Upload Brands', description: 'Import a brand JSON file', icon: Upload, href: '/brands' },
-  { label: 'Run Job Search', description: 'Start a new matching job', icon: Search, href: '/jobs' },
-  { label: 'View Conflicts', description: 'Review detected conflicts', icon: AlertTriangle, href: '/conflicts' },
-  { label: 'Billing Settings', description: 'Manage your subscription', icon: Settings, href: '/billing' },
+  { label: 'Upload Brands', description: 'Import a brand JSON file', icon: Upload, href: '/brands/upload' },
+  { label: 'Run Job Search', description: 'Start a new matching job', icon: Search, href: '/conflicts/new' },
+  { label: 'View Conflicts', description: 'Review detected conflicts', icon: AlertTriangle, href: '/conflicts/matches' },
+  { label: 'Billing Settings', description: 'Manage your subscription', icon: Settings, href: '/account' },
 ]
 
 function QuickActions() {
   return (
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
       {quickActions.map(({ label, description, icon: Icon, href }) => (
-        <Card
-          key={label}
-          className="cursor-pointer transition-colors hover:bg-accent/50"
-          onClick={() => window.location.assign(href)}
-        >
-          <CardContent className="pt-6">
-            <div className="flex flex-col items-center text-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                <Icon className="h-5 w-5 text-primary" />
+        <Link key={label} to={href}>
+          <Card className="cursor-pointer transition-colors hover:bg-accent/50 h-full">
+            <CardContent className="pt-6">
+              <div className="flex flex-col items-center text-center gap-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                  <Icon className="h-5 w-5 text-primary" />
+                </div>
+                <p className="text-sm font-medium">{label}</p>
+                <p className="text-xs text-muted-foreground">{description}</p>
               </div>
-              <p className="text-sm font-medium">{label}</p>
-              <p className="text-xs text-muted-foreground">{description}</p>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </Link>
       ))}
     </div>
   )
@@ -91,13 +91,32 @@ function QuickActions() {
 
 // ─── Recent Activity ──────────────────────────────────────────────────────────
 
-const placeholderActivity = [
-  { id: 1, text: 'New brand "Acme Corp" uploaded', time: '2 hours ago', icon: Upload },
-  { id: 2, text: 'Job search completed — 12 matches found', time: '5 hours ago', icon: BarChart3 },
-  { id: 3, text: 'Conflict detected for "Alpha Brand"', time: '1 day ago', icon: AlertTriangle },
-]
+const actionIcon: Record<string, React.ElementType> = {
+  brands_imported:    Upload,
+  job_completed:      BarChart3,
+  conflict_confirmed: AlertTriangle,
+  conflict_dismissed: AlertTriangle,
+  report_downloaded:  Globe,
+  report_processed:   Globe,
+}
+
+function timeAgo(iso: string): string {
+  const diff  = Date.now() - new Date(iso).getTime()
+  const mins  = Math.floor(diff / 60_000)
+  if (mins < 60)  return `${mins}m ago`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `${hours}h ago`
+  return `${Math.floor(hours / 24)}d ago`
+}
 
 function RecentActivity() {
+  const { token } = useAuth()
+  const { data, isLoading } = useQuery<ActivityLogItem[]>({
+    queryKey: ['recent-activity'],
+    queryFn: () => getRecentActivityApi(token!),
+    enabled: !!token,
+  })
+
   return (
     <Card>
       <CardHeader>
@@ -107,12 +126,24 @@ function RecentActivity() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {placeholderActivity.length === 0 ? (
+        {isLoading ? (
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-start gap-3">
+                <Skeleton className="h-7 w-7 rounded-full flex-shrink-0" />
+                <div className="flex-1 space-y-1.5">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : !data?.length ? (
           <p className="text-sm text-muted-foreground py-4 text-center">No recent activity.</p>
         ) : (
           <ul className="space-y-4">
-            {placeholderActivity.map((item, i) => {
-              const Icon = item.icon
+            {data.map((item, i) => {
+              const Icon = actionIcon[item.action] ?? Activity
               return (
                 <li key={item.id}>
                   <div className="flex items-start gap-3">
@@ -120,11 +151,11 @@ function RecentActivity() {
                       <Icon className="h-3.5 w-3.5 text-muted-foreground" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm">{item.text}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{item.time}</p>
+                      <p className="text-sm">{item.description}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{timeAgo(item.created_at)}</p>
                     </div>
                   </div>
-                  {i < placeholderActivity.length - 1 && <Separator className="mt-4" />}
+                  {i < data.length - 1 && <Separator className="mt-4" />}
                 </li>
               )
             })}
@@ -186,15 +217,15 @@ function YourPlan({ subscription, loading }: { subscription: SubscriptionOut | u
                 <p>Trial ends {formatDate(subscription.trial_end)}</p>
               )}
             </div>
-            <Button variant="outline" size="sm" onClick={() => window.location.assign('/billing')}>
-              Manage Billing
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/account">Manage Billing</Link>
             </Button>
           </div>
         ) : (
           <div className="space-y-3">
             <p className="text-sm text-muted-foreground">No active subscription.</p>
-            <Button size="sm" onClick={() => window.location.assign('/register')}>
-              Choose a Plan
+            <Button size="sm" asChild>
+              <Link to="/register">Choose a Plan</Link>
             </Button>
           </div>
         )}
@@ -223,9 +254,9 @@ function LayoutPage() {
 
   const statCards = [
     { title: 'Total Brands', value: stats?.total_brands, icon: Tag },
-    { title: 'Active Jobs', value: stats?.active_jobs, icon: Briefcase },
+    { title: 'Total Jobs', value: stats?.total_jobs, icon: Briefcase },
     { title: 'Conflicts Found', value: stats?.conflicts_found, icon: AlertTriangle },
-    { title: 'Monitored Markets', value: stats?.monitored_markets, icon: Globe },
+    { title: 'Publications Analyzed', value: stats?.publications_analyzed, icon: Globe },
   ]
 
   return (

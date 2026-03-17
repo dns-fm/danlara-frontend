@@ -126,9 +126,9 @@ export interface CompanyOut {
 
 export interface DashboardStats {
   total_brands: number
-  active_jobs: number
+  total_jobs: number
   conflicts_found: number
-  monitored_markets: number
+  publications_analyzed: number
 }
 
 // ─── API calls ────────────────────────────────────────────────────────────────
@@ -194,6 +194,16 @@ export const getDashboardStatsApi = (token: string) =>
   request<DashboardStats>('/api/users/dashboard/stats', {
     headers: bearer(token),
   })
+
+export interface ActivityLogItem {
+  id: number
+  action: string
+  description: string
+  created_at: string
+}
+
+export const getRecentActivityApi = (token: string, limit = 20) =>
+  request<ActivityLogItem[]>(`/api/users/activity?limit=${limit}`, { headers: bearer(token) })
 
 // ─── RNPI types ───────────────────────────────────────────────────────────────
 
@@ -563,4 +573,32 @@ export const updateConflictMatchApi = (
     method: 'PATCH',
     headers: { ...bearer(token), 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
+  })
+
+// ─── Generic Terms types ──────────────────────────────────────────────────────
+
+export interface GenericTerm {
+  id: number
+  code: string
+  token: string
+}
+
+export const getTermsApi = (token: string, params: { search?: string; code?: string } = {}) => {
+  const qs = new URLSearchParams()
+  if (params.search) qs.set('search', params.search)
+  if (params.code) qs.set('code', params.code)
+  return request<GenericTerm[]>(`/api/jobs/terms?${qs}`, { headers: bearer(token) })
+}
+
+export const createTermApi = (token: string, payload: { code: string; token: string }) =>
+  request<GenericTerm>('/api/jobs/terms', {
+    method: 'POST',
+    headers: { ...bearer(token), 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+
+export const deleteTermApi = (token: string, termId: number) =>
+  request<void>(`/api/jobs/terms/${termId}`, {
+    method: 'DELETE',
+    headers: bearer(token),
   })

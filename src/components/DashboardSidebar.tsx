@@ -19,6 +19,7 @@ import {
   PanelLeftOpen,
   X,
   List,
+  BookX,
 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
@@ -63,6 +64,7 @@ const navItems: NavItem[] = [
       { label: 'All Jobs', icon: AlertTriangle, to: '/conflicts' },
       { label: 'All Conflicts', icon: List, to: '/conflicts/matches' },
       { label: 'New Job', icon: Plus, to: '/conflicts/new' },
+      { label: 'Common Words', icon: BookX, to: '/conflicts/terms' },
     ],
   },
   { label: 'Account', icon: User, to: '/account' },

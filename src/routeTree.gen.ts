@@ -26,6 +26,7 @@ import { Route as BrandsUploadRouteImport } from './routes/brands/upload'
 import { Route as BrandsNewRouteImport } from './routes/brands/new'
 import { Route as ThirdPartyBrandsTrademarksIndexRouteImport } from './routes/third-party-brands/trademarks/index'
 import { Route as ThirdPartyBrandsReportIdIndexRouteImport } from './routes/third-party-brands/$reportId/index'
+import { Route as ConflictsTermsIndexRouteImport } from './routes/conflicts/terms/index'
 import { Route as ConflictsMatchesIndexRouteImport } from './routes/conflicts/matches/index'
 import { Route as ConflictsJobIdIndexRouteImport } from './routes/conflicts/$jobId/index'
 import { Route as BrandsUploadsIndexRouteImport } from './routes/brands/uploads/index'
@@ -122,6 +123,11 @@ const ThirdPartyBrandsReportIdIndexRoute =
     path: '/third-party-brands/$reportId/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ConflictsTermsIndexRoute = ConflictsTermsIndexRouteImport.update({
+  id: '/conflicts/terms/',
+  path: '/conflicts/terms/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConflictsMatchesIndexRoute = ConflictsMatchesIndexRouteImport.update({
   id: '/conflicts/matches/',
   path: '/conflicts/matches/',
@@ -188,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/brands/uploads/': typeof BrandsUploadsIndexRoute
   '/conflicts/$jobId/': typeof ConflictsJobIdIndexRoute
   '/conflicts/matches/': typeof ConflictsMatchesIndexRoute
+  '/conflicts/terms/': typeof ConflictsTermsIndexRoute
   '/third-party-brands/$reportId/': typeof ThirdPartyBrandsReportIdIndexRoute
   '/third-party-brands/trademarks/': typeof ThirdPartyBrandsTrademarksIndexRoute
   '/conflicts/matches/$matchId/': typeof ConflictsMatchesMatchIdIndexRoute
@@ -215,6 +222,7 @@ export interface FileRoutesByTo {
   '/brands/uploads': typeof BrandsUploadsIndexRoute
   '/conflicts/$jobId': typeof ConflictsJobIdIndexRoute
   '/conflicts/matches': typeof ConflictsMatchesIndexRoute
+  '/conflicts/terms': typeof ConflictsTermsIndexRoute
   '/third-party-brands/$reportId': typeof ThirdPartyBrandsReportIdIndexRoute
   '/third-party-brands/trademarks': typeof ThirdPartyBrandsTrademarksIndexRoute
   '/conflicts/matches/$matchId': typeof ConflictsMatchesMatchIdIndexRoute
@@ -243,6 +251,7 @@ export interface FileRoutesById {
   '/brands/uploads/': typeof BrandsUploadsIndexRoute
   '/conflicts/$jobId/': typeof ConflictsJobIdIndexRoute
   '/conflicts/matches/': typeof ConflictsMatchesIndexRoute
+  '/conflicts/terms/': typeof ConflictsTermsIndexRoute
   '/third-party-brands/$reportId/': typeof ThirdPartyBrandsReportIdIndexRoute
   '/third-party-brands/trademarks/': typeof ThirdPartyBrandsTrademarksIndexRoute
   '/conflicts/matches/$matchId/': typeof ConflictsMatchesMatchIdIndexRoute
@@ -272,6 +281,7 @@ export interface FileRouteTypes {
     | '/brands/uploads/'
     | '/conflicts/$jobId/'
     | '/conflicts/matches/'
+    | '/conflicts/terms/'
     | '/third-party-brands/$reportId/'
     | '/third-party-brands/trademarks/'
     | '/conflicts/matches/$matchId/'
@@ -299,6 +309,7 @@ export interface FileRouteTypes {
     | '/brands/uploads'
     | '/conflicts/$jobId'
     | '/conflicts/matches'
+    | '/conflicts/terms'
     | '/third-party-brands/$reportId'
     | '/third-party-brands/trademarks'
     | '/conflicts/matches/$matchId'
@@ -326,6 +337,7 @@ export interface FileRouteTypes {
     | '/brands/uploads/'
     | '/conflicts/$jobId/'
     | '/conflicts/matches/'
+    | '/conflicts/terms/'
     | '/third-party-brands/$reportId/'
     | '/third-party-brands/trademarks/'
     | '/conflicts/matches/$matchId/'
@@ -354,6 +366,7 @@ export interface RootRouteChildren {
   BrandsUploadsIndexRoute: typeof BrandsUploadsIndexRoute
   ConflictsJobIdIndexRoute: typeof ConflictsJobIdIndexRoute
   ConflictsMatchesIndexRoute: typeof ConflictsMatchesIndexRoute
+  ConflictsTermsIndexRoute: typeof ConflictsTermsIndexRoute
   ThirdPartyBrandsReportIdIndexRoute: typeof ThirdPartyBrandsReportIdIndexRoute
   ThirdPartyBrandsTrademarksIndexRoute: typeof ThirdPartyBrandsTrademarksIndexRoute
   ConflictsMatchesMatchIdIndexRoute: typeof ConflictsMatchesMatchIdIndexRoute
@@ -480,6 +493,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ThirdPartyBrandsReportIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conflicts/terms/': {
+      id: '/conflicts/terms/'
+      path: '/conflicts/terms'
+      fullPath: '/conflicts/terms/'
+      preLoaderRoute: typeof ConflictsTermsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/conflicts/matches/': {
       id: '/conflicts/matches/'
       path: '/conflicts/matches'
@@ -563,6 +583,7 @@ const rootRouteChildren: RootRouteChildren = {
   BrandsUploadsIndexRoute: BrandsUploadsIndexRoute,
   ConflictsJobIdIndexRoute: ConflictsJobIdIndexRoute,
   ConflictsMatchesIndexRoute: ConflictsMatchesIndexRoute,
+  ConflictsTermsIndexRoute: ConflictsTermsIndexRoute,
   ThirdPartyBrandsReportIdIndexRoute: ThirdPartyBrandsReportIdIndexRoute,
   ThirdPartyBrandsTrademarksIndexRoute: ThirdPartyBrandsTrademarksIndexRoute,
   ConflictsMatchesMatchIdIndexRoute: ConflictsMatchesMatchIdIndexRoute,
