@@ -10,7 +10,7 @@ import { nitro } from 'nitro/vite'
 
 // Configurable at build time — set BACKEND_URL in Railway env vars.
 // Falls back to localhost:8000 for local development.
-const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8000'
+const BACKEND_URL = process.env.BACKEND_URL
 
 const config = defineConfig({
   plugins: [
