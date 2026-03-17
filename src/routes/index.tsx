@@ -1,97 +1,84 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Button } from '#/components/ui/button'
+import { Card, CardContent } from '#/components/ui/card'
+import { Tag, AlertTriangle, Globe, CheckCircle } from 'lucide-react'
 
 export const Route = createFileRoute('/')({ component: LandingPage })
 
 const features = [
   {
-    title: 'Brand Management',
-    description:
-      'Centralise your brand assets, guidelines, and collateral in one powerful workspace.',
-    icon: '🏷️',
+    title: 'Brand Portfolio',
+    description: 'Upload and manage your entire brand portfolio in one place. Import from JSON or PDF with automatic embedding generation.',
+    icon: Tag,
   },
   {
-    title: 'Job Matching',
-    description:
-      'AI-driven matching connects the right candidates to the right opportunities instantly.',
-    icon: '🎯',
+    title: 'Conflict Detection',
+    description: 'AI-powered similarity analysis compares your brands against new INPI publications to surface potential trademark conflicts.',
+    icon: AlertTriangle,
   },
   {
-    title: 'Smart Analytics',
-    description:
-      'Deep insights powered by embeddings and semantic search across all your data.',
-    icon: '📊',
+    title: 'INPI Monitoring',
+    description: 'Daily automated monitoring of Brazilian trademark publications. Never miss a conflicting registration again.',
+    icon: Globe,
   },
   {
-    title: 'Flexible Plans',
-    description:
-      'Scale from startup to enterprise with plans that grow alongside your business.',
-    icon: '🚀',
+    title: 'Review Workflow',
+    description: 'Review, confirm, or dismiss detected conflicts with notes. Track your team\'s decisions across every publication.',
+    icon: CheckCircle,
   },
 ]
 
 function LandingPage() {
   return (
-    <main className="page-wrap px-4 pb-16 pt-14">
+    <main className="max-w-5xl mx-auto px-6 pb-20 pt-16">
       {/* Hero */}
-      <section className="island-shell rise-in relative overflow-hidden rounded-[2rem] px-6 py-14 sm:px-12 sm:py-20">
-        <div className="pointer-events-none absolute -left-20 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.32),transparent_66%)]" />
-        <div className="pointer-events-none absolute -bottom-20 -right-20 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.18),transparent_66%)]" />
-
-        <p className="island-kicker mb-4 text-sm font-semibold uppercase tracking-widest">
-          Welcome to Danlara
+      <section className="rounded-2xl border bg-card px-8 py-16 mb-8 relative overflow-hidden">
+        <div className="pointer-events-none absolute -left-24 -top-24 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -right-24 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">
+          Trademark Intelligence
         </p>
-        <h1 className="display-title mb-6 max-w-3xl text-4xl font-bold leading-[1.02] tracking-tight text-[var(--sea-ink)] sm:text-6xl">
-          Build smarter.<br className="hidden sm:block" /> Connect faster.
+        <h1 className="text-4xl font-bold tracking-tight mb-5 max-w-2xl sm:text-5xl">
+          Protect your brands.<br className="hidden sm:block" /> Detect conflicts early.
         </h1>
-        <p className="mb-10 max-w-2xl text-base text-[var(--sea-ink-soft)] sm:text-lg">
-          Danlara is the all-in-one platform for brand management, intelligent
-          job matching, and subscription-powered growth. Everything your team
-          needs, in one place.
+        <p className="text-muted-foreground text-base sm:text-lg max-w-xl mb-8">
+          Danlara monitors INPI trademark publications daily, running AI-powered conflict analysis against your brand portfolio so you can act before it's too late.
         </p>
         <div className="flex flex-wrap gap-3">
           <Button asChild size="lg">
-            <Link to="/register">Get Started</Link>
+            <Link to="/register">Get started</Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link to="/login">Sign In</Link>
+            <Link to="/login">Sign in</Link>
           </Button>
         </div>
       </section>
 
       {/* Features */}
-      <section className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {features.map(({ title, description, icon }, index) => (
-          <article
-            key={title}
-            className="island-shell feature-card rise-in rounded-2xl p-5"
-            style={{ animationDelay: `${index * 90 + 80}ms` }}
-          >
-            <div className="mb-3 text-2xl">{icon}</div>
-            <h2 className="mb-2 text-base font-semibold text-[var(--sea-ink)]">
-              {title}
-            </h2>
-            <p className="m-0 text-sm text-[var(--sea-ink-soft)]">
-              {description}
-            </p>
-          </article>
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+        {features.map(({ title, description, icon: Icon }) => (
+          <Card key={title}>
+            <CardContent className="pt-6">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 mb-4">
+                <Icon className="h-5 w-5 text-primary" />
+              </div>
+              <h2 className="text-sm font-semibold mb-2">{title}</h2>
+              <p className="text-sm text-muted-foreground">{description}</p>
+            </CardContent>
+          </Card>
         ))}
       </section>
 
-      {/* Pricing CTA */}
-      <section className="island-shell rise-in mt-10 rounded-2xl px-6 py-10 text-center sm:px-12">
-        <p className="island-kicker mb-3 text-sm font-semibold uppercase tracking-widest">
-          Pricing
-        </p>
-        <h2 className="mb-4 text-2xl font-bold text-[var(--sea-ink)] sm:text-3xl">
-          Choose the right plan for your team
+      {/* CTA */}
+      <section className="rounded-2xl border bg-card px-8 py-12 text-center">
+        <h2 className="text-2xl font-bold tracking-tight mb-3 sm:text-3xl">
+          Ready to get started?
         </h2>
-        <p className="mx-auto mb-8 max-w-xl text-base text-[var(--sea-ink-soft)]">
-          From growing startups to established enterprises — every plan unlocks
-          the full Danlara platform with flexible billing.
+        <p className="text-muted-foreground max-w-md mx-auto mb-8">
+          Choose a plan that fits your team and start monitoring trademark publications today.
         </p>
         <Button asChild size="lg">
-          <Link to="/register">View Plans & Sign Up</Link>
+          <Link to="/register">View plans & sign up</Link>
         </Button>
       </section>
     </main>

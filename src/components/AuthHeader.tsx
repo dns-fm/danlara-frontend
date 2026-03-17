@@ -6,21 +6,16 @@ export default function AuthHeader() {
   const { user, isLoading, logout } = useAuth()
 
   if (isLoading) {
-    return <div className="h-8 w-20 animate-pulse rounded-md bg-[var(--line)]" />
+    return <div className="h-8 w-20 animate-pulse rounded-md bg-muted" />
   }
 
   if (user) {
     return (
       <div className="flex items-center gap-2">
-        <span className="hidden text-xs font-medium text-[var(--sea-ink-soft)] sm:block">
-          {user.email}
-        </span>
-        <button
-          onClick={() => void logout()}
-          className="h-9 rounded-lg border border-[var(--line)] bg-white/50 px-3 text-sm font-medium text-[var(--sea-ink)] transition hover:bg-white/80"
-        >
+        <span className="hidden text-xs text-muted-foreground sm:block">{user.email}</span>
+        <Button variant="outline" size="sm" onClick={() => void logout()}>
           Sign out
-        </button>
+        </Button>
       </div>
     )
   }
